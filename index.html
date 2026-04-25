@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AutoBlog — Презентация</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --purple: #7C3AED;
+    --blue: #4F46E5;
+    --cyan: #06B6D4;
+    --green: #10B981;
+    --orange: #F59E0B;
+    --red: #EF4444;
+    --bg: #060612;
+    --surface: rgba(255,255,255,0.04);
+    --border: rgba(255,255,255,0.08);
+    --text: #F1F5F9;
+    --muted: rgba(241,245,249,0.5);
+    --grad: linear-gradient(135deg, #7C3AED, #4F46E5);
+    --grad2: linear-gradient(135deg, #06B6D4, #7C3AED);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+  }
+
+  /* ── Navigation dots ── */
+  .nav-dots {
+    position: fixed;
+    right: 28px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 100;
+  }
+  .nav-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    cursor: pointer;
+    transition: all .3s;
+    border: none;
+    padding: 0;
+  }
+  .nav-dot.active { background: var(--purple); transform: scale(1.4); }
+
+  /* ── Slide base ── */
+  .slide {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 80px 60px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* ── Glow backgrounds ── */
+  .glow {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(120px);
+    opacity: 0.15;
+    pointer-events: none;
+  }
+  .glow-purple { background: #7C3AED; }
+  .glow-blue   { background: #4F46E5; }
+  .glow-cyan   { background: #06B6D4; }
+
+  /* ── Slide label ── */
+  .slide-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: var(--purple);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .slide-label::before {
+    content: '';
+    display: block;
+    width: 24px; height: 2px;
+    background: var(--purple);
+    border-radius: 2px;
+  }
+
+  /* ── Typography ── */
+  .heading-xl {
+    font-size: clamp(40px, 6vw, 72px);
+    font-weight: 900;
+    line-height: 1.08;
+    letter-spacing: -.03em;
+    margin-bottom: 24px;
+  }
+  .heading-lg {
+    font-size: clamp(32px, 4vw, 52px);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -.02em;
+    margin-bottom: 20px;
+  }
+  .heading-md {
+    font-size: clamp(24px, 3vw, 36px);
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 16px;
+  }
+  .grad-text {
+    background: linear-gradient(135deg, #A78BFA, #60A5FA);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .lead {
+    font-size: clamp(16px, 2vw, 20px);
+    color: var(--muted);
+    max-width: 560px;
+    line-height: 1.7;
+  }
+
+  /* ── Cards ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 32px;
+    backdrop-filter: blur(10px);
+    transition: border-color .3s, transform .3s;
+  }
+  .card:hover {
+    border-color: rgba(124,58,237,0.4);
+    transform: translateY(-4px);
+  }
+
+  /* ── Grid layouts ── */
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+  .grid-pricing { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+
+  /* ── Icon badge ── */
+  .icon-badge {
+    width: 52px; height: 52px;
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px;
+    margin-bottom: 20px;
+    flex-shrink: 0;
+  }
+
+  /* ── Stat number ── */
+  .stat-num {
+    font-size: clamp(48px, 6vw, 80px);
+    font-weight: 900;
+    letter-spacing: -.04em;
+    line-height: 1;
+    background: linear-gradient(135deg, #A78BFA, #60A5FA);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* ── Tag ── */
+  .tag {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(124,58,237,0.15);
+    border: 1px solid rgba(124,58,237,0.3);
+    color: #A78BFA;
+    padding: 6px 14px;
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  /* ── Divider ── */
+  .divider {
+    width: 100%;
+    height: 1px;
+    background: var(--border);
+    margin: 40px 0;
+  }
+
+  /* ── Image placeholder ── */
+  .img-slot {
+    border-radius: 16px;
+    background: rgba(255,255,255,0.04);
+    border: 2px dashed rgba(255,255,255,0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: var(--muted);
+    font-size: 13px;
+    text-align: center;
+    padding: 24px;
+  }
+  .img-slot-icon { font-size: 32px; opacity: .4; }
+
+  /* ── Slide separators ── */
+  .slide + .slide {
+    border-top: 1px solid var(--border);
+  }
+
+  /* ── Max width wrapper ── */
+  .wrap { max-width: 1100px; margin: 0 auto; width: 100%; }
+
+  /* ── Step ── */
+  .step-num {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    background: var(--grad);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; font-weight: 800;
+    flex-shrink: 0;
+    box-shadow: 0 0 20px rgba(124,58,237,0.4);
+  }
+
+  /* ── CTA button ── */
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: var(--grad);
+    color: #fff;
+    padding: 16px 32px;
+    border-radius: 14px;
+    font-size: 16px;
+    font-weight: 700;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 8px 32px rgba(124,58,237,0.35);
+    transition: transform .2s, box-shadow .2s;
+  }
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(124,58,237,0.5);
+  }
+
+  /* ── Pricing card highlighted ── */
+  .pricing-popular {
+    border-color: rgba(124,58,237,0.5) !important;
+    background: rgba(124,58,237,0.08) !important;
+    position: relative;
+  }
+  .pricing-popular::before {
+    content: 'Популярный';
+    position: absolute;
+    top: -14px; left: 50%; transform: translateX(-50%);
+    background: var(--grad);
+    color: #fff;
+    padding: 4px 16px;
+    border-radius: 100px;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .price {
+    font-size: 42px;
+    font-weight: 900;
+    letter-spacing: -.02em;
+    line-height: 1;
+    margin: 20px 0 6px;
+  }
+  .price-period { font-size: 14px; color: var(--muted); }
+
+  .check-list { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-top: 24px; }
+  .check-list li {
+    display: flex; align-items: flex-start; gap: 10px;
+    font-size: 14px; color: var(--muted);
+  }
+  .check-list li::before {
+    content: '✓';
+    color: var(--green);
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .check-list li.dim::before { content: '—'; color: rgba(255,255,255,0.2); }
+  .check-list li.dim { color: rgba(255,255,255,0.2); }
+
+  .check-list-strong li { font-size: 15px; }
+
+  /* ── Print/export hint ── */
+  @media print {
+    .nav-dots { display: none; }
+    .slide { page-break-after: always; min-height: 100vh; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Nav dots -->
+<nav class="nav-dots" id="navDots"></nav>
+
+<!-- ════════════════════════════════════════════
+     СЛАЙД 1 — ОБЛОЖКА
+     ════════════════════════════════════════════ -->
+<section class="slide" id="slide-1">
+  <div class="glow glow-purple" style="width:600px;height:600px;top:-200px;right:-100px;"></div>
+  <div class="glow glow-blue" style="width:400px;height:400px;bottom:-100px;left:-100px;"></div>
+
+  <div class="wrap">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;">
+      <div>
+        <div class="tag" style="margin-bottom:28px;">⚡ ИИ-автопостинг для бизнеса</div>
+        <h1 class="heading-xl">
+          SEO-статьи<br>на вашем сайте<br><span class="grad-text">без копирайтера</span>
+        </h1>
+        <p class="lead" style="margin-bottom:40px;">
+          AutoBlog подключается к вашему сайту и каждый день публикует SEO-статьи с уникальными картинками — полностью автоматически.
+        </p>
+        <div style="display:flex;gap:40px;margin-bottom:40px;">
+          <div>
+            <div style="font-size:32px;font-weight:900;color:#A78BFA;">30+</div>
+            <div style="font-size:13px;color:var(--muted);">статей в месяц</div>
+          </div>
+          <div>
+            <div style="font-size:32px;font-weight:900;color:#60A5FA;">0 мин</div>
+            <div style="font-size:13px;color:var(--muted);">вашего времени</div>
+          </div>
+          <div>
+            <div style="font-size:32px;font-weight:900;color:#34D399;">1 день</div>
+            <div style="font-size:13px;color:var(--muted);">до запуска</div>
+          </div>
+        </div>
+        <a class="btn-primary" href="https://t.me/Besp1le" target="_blank">Подключить →</a>
+      </div>
+
+      <div style="border-radius:20px;overflow:hidden;height:calc(100vh - 200px);max-height:520px;"><img src="images/slide1.png" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.style.background='rgba(255,255,255,0.04)'"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+     СЛАЙД 2 — ПРОБЛЕМА
+     ════════════════════════════════════════════ -->
+<section class="slide" id="slide-2" style="overflow:hidden;min-height:100vh;padding:48px 60px;">
+  <div class="glow glow-purple" style="width:500px;height:500px;bottom:-150px;right:100px;"></div>
+
+  <div class="wrap">
+    <div class="slide-label">Проблема</div>
+    <h2 class="heading-lg" style="max-width:600px;font-size:clamp(28px,3.5vw,44px);margin-bottom:12px;">
+      Без блога — вас<br><span class="grad-text">не видят в поиске</span>
+    </h2>
+
+    <div class="grid-3" style="margin-top:24px;">
+      <div class="card" style="padding:20px;">
+        <div class="icon-badge" style="background:rgba(239,68,68,0.15);margin-bottom:12px;">🙈</div>
+        <div style="font-size:15px;font-weight:700;margin-bottom:8px;">Поисковики игнорируют</div>
+        <p style="font-size:13px;color:var(--muted);line-height:1.6;">
+          Яндекс и Google ранжируют сайты с регулярным контентом. Без блога — ваш сайт не попадает в выдачу.
+        </p>
+      </div>
+
+      <div class="card" style="padding:20px;">
+        <div class="icon-badge" style="background:rgba(245,158,11,0.15);margin-bottom:12px;">📉</div>
+        <div style="font-size:15px;font-weight:700;margin-bottom:8px;">Конкуренты растут</div>
+        <p style="font-size:13px;color:var(--muted);line-height:1.6;">
+          Сайты с блогом получают органический трафик ежедневно. Пока вы без блога — они забирают ваших клиентов.
+        </p>
+      </div>
+
+      <div class="card" style="padding:20px;">
+        <div class="icon-badge" style="background:rgba(124,58,237,0.15);margin-bottom:12px;">💸</div>
+        <div style="font-size:15px;font-weight:700;margin-bottom:8px;">Копирайтер — дорого</div>
+        <p style="font-size:13px;color:var(--muted);line-height:1.6;">
+          Поиск, согласование, правки, срывы сроков. Каждый месяц — новые затраты и нервы.
+        </p>
+      </div>
+    </div>
+
+    <div style="border-radius:16px;overflow:hidden;margin-top:16px;max-height:100vh;"><img src="images/slide2.png" style="width:100%;height:100%;object-fit:contain;object-position:center;" onerror="this.parentElement.style.display='none'"></div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+     СЛАЙД 3 — РЕШЕНИЕ
+     ════════════════════════════════════════════ -->
+<section class="slide" id="slide-3">
+  <div class="glow glow-cyan" style="width:500px;height:500px;top:-100px;left:-100px;"></div>
+
+  <div class="wrap">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;">
+      <div style="border-radius:20px;overflow:hidden;height:calc(100vh - 200px);max-height:500px;"><img src="images/slide3.png" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.style.background='rgba(255,255,255,0.04)'"></div>
+
+      <div>
+        <div class="slide-label">Решение</div>
+        <h2 class="heading-lg">
+          AutoBlog — ИИ работает<br><span class="grad-text">вместо копирайтера</span>
+        </h2>
+        <p class="lead" style="margin-bottom:32px;">
+          Система подключается к вашему сайту и каждый день самостоятельно создаёт SEO-статьи с уникальными картинками и публикует их.
+        </p>
+
+        <div style="display:flex;flex-direction:column;gap:14px;">
+          <div style="display:flex;align-items:flex-start;gap:16px;padding:16px;background:var(--surface);border:1px solid var(--border);border-radius:14px;">
+            <span style="font-size:24px;">✍️</span>
+            <div>
+              <div style="font-weight:600;margin-bottom:4px;">ИИ пишет статьи 3000+ символов</div>
+              <div style="font-size:13px;color:var(--muted);">С заголовками, ключевыми словами, мета-описанием</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:16px;padding:16px;background:var(--surface);border:1px solid var(--border);border-radius:14px;">
+            <span style="font-size:24px;">🖼️</span>
+            <div>
+              <div style="font-weight:600;margin-bottom:4px;">Генерирует уникальные картинки</div>
+              <div style="font-size:13px;color:var(--muted);">К каждой статье своя иллюстрация, без стоков</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:16px;padding:16px;background:var(--surface);border:1px solid var(--border);border-radius:14px;">
+            <span style="font-size:24px;">📤</span>
+            <div>
+              <div style="font-weight:600;margin-bottom:4px;">Публикует на вашем домене</div>
+              <div style="font-size:13px;color:var(--muted);">Статьи индексируются именно на вашем сайте</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+     СЛАЙД 4 — КАК РАБОТАЕТ
+     ════════════════════════════════════════════ -->
+<section class="slide" id="slide-4" style="padding:48px 60px;overflow:hidden;">
+  <div class="glow glow-blue" style="width:500px;height:500px;top:50%;right:-150px;transform:translateY(-50%);"></div>
+
+  <div class="wrap" style="display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;">
+    <div>
+      <div class="slide-label">Как работает</div>
+      <h2 class="heading-lg" style="max-width:580px;font-size:clamp(26px,3vw,40px);margin-bottom:20px;">
+        От подключения до первых<br><span class="grad-text">клиентов — 5 шагов</span>
+      </h2>
+
+      <div style="display:flex;flex-direction:column;gap:0;position:relative;">
+        <div style="position:absolute;left:18px;top:36px;bottom:36px;width:2px;background:linear-gradient(to bottom,#7C3AED,#4F46E5,transparent);opacity:0.4;"></div>
+
+        <div style="display:flex;gap:20px;align-items:flex-start;padding:10px 0;">
+          <div class="step-num" style="width:36px;height:36px;font-size:14px;flex-shrink:0;">1</div>
+          <div style="padding-top:4px;">
+            <div style="font-size:15px;font-weight:700;margin-bottom:2px;">Подключаем ваш сайт</div>
+            <div style="font-size:12px;color:var(--muted);">Интеграция за 1 день</div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:20px;align-items:flex-start;padding:10px 0;">
+          <div class="step-num" style="width:36px;height:36px;font-size:14px;flex-shrink:0;">2</div>
+          <div style="padding-top:4px;">
+            <div style="font-size:15px;font-weight:700;margin-bottom:2px;">Настраиваем тематику и стиль</div>
+            <div style="font-size:12px;color:var(--muted);">Под ваш бизнес и аудиторию</div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:20px;align-items:flex-start;padding:10px 0;">
+          <div class="step-num" style="width:36px;height:36px;font-size:14px;flex-shrink:0;">3</div>
+          <div style="padding-top:4px;">
+            <div style="font-size:15px;font-weight:700;margin-bottom:2px;">Создаём страницу блога</div>
+            <div style="font-size:12px;color:var(--muted);">В дизайне вашего сайта</div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:20px;align-items:flex-start;padding:10px 0;">
+          <div class="step-num" style="width:36px;height:36px;font-size:14px;flex-shrink:0;">4</div>
+          <div style="padding-top:4px;">
+            <div style="font-size:15px;font-weight:700;margin-bottom:2px;">ИИ пишет статьи + картинки</div>
+            <div style="font-size:12px;color:var(--muted);">Каждый день автоматически</div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:20px;align-items:flex-start;padding:10px 0;">
+          <div class="step-num" style="width:36px;height:36px;font-size:14px;flex-shrink:0;">5</div>
+          <div style="padding-top:4px;">
+            <div style="font-size:15px;font-weight:700;margin-bottom:2px;">Сайт растёт в поиске</div>
+            <div style="font-size:12px;color:var(--muted);">Яндекс и Google приводят клиентов</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:16px;padding:12px 20px;background:rgba(124,58,237,0.1);border:1px solid rgba(124,58,237,0.2);border-radius:12px;font-size:13px;color:var(--muted);">
+        ⚡ После запуска система работает полностью автономно
+      </div>
+    </div>
+
+    <div style="border-radius:20px;overflow:hidden;height:calc(100vh - 200px);max-height:500px;"><img src="images/slide4.png" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.style.background='rgba(255,255,255,0.04)'"></div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+     СЛАЙД 5 — ЧТО ВХОДИТ
+     ════════════════════════════════════════════ -->
+<section class="slide" id="slide-5">
+  <div class="glow glow-purple" style="width:400px;height:400px;top:-100px;left:-100px;"></div>
+  <div class="glow glow-cyan" style="width:400px;height:400px;bottom:-100px;right:-100px;"></div>
+
+  <div class="wrap">
+    <div class="slide-label">Что входит</div>
+    <h2 class="heading-lg">Всё включено —<br><span class="grad-text">ничего лишнего</span></h2>
+
+    <div class="grid-3" style="margin-top:40px;">
+      <div class="card">
+        <div class="icon-badge" style="background:rgba(124,58,237,0.15);font-size:28px;">🎨</div>
+        <div style="font-size:17px;font-weight:700;margin-bottom:8px;">Блог в стиле вашего сайта</div>
+        <p style="font-size:14px;color:var(--muted);">Страница блога создаётся в дизайне вашего бренда. Бесшовная интеграция.</p>
+      </div>
+
+      <div class="card">
+        <div class="icon-badge" style="background:rgba(6,182,212,0.15);font-size:28px;">📝</div>
+        <div style="font-size:17px;font-weight:700;margin-bottom:8px;">SEO-статьи 3000+ символов</div>
+        <p style="font-size:14px;color:var(--muted);">Каждая статья оптимизирована под поисковики: H1/H2, ключевые слова, мета-описание.</p>
+      </div>
+
+      <div class="card">
+        <div class="icon-badge" style="background:rgba(16,185,129,0.15);font-size:28px;">🖼️</div>
+        <div style="font-size:17px;font-weight:700;margin-bottom:8px;">Уникальные картинки</div>
+        <p style="font-size:14px;color:var(--muted);">ИИ генерирует уникальное изображение к каждой статье. Никаких стоков.</p>
+      </div>
+
+      <div class="card">
+        <div class="icon-badge" style="background:rgba(245,158,11,0.15);font-size:28px;">📊</div>
+        <div style="font-size:17px;font-weight:700;margin-bottom:8px;">Личный кабинет</div>
+        <p style="font-size:14px;color:var(--muted);">Смотрите все статьи, просмотры, редактируйте темы — всё в одном месте.</p>
+      </div>
+
+      <div class="card">
+        <div class="icon-badge" style="background:rgba(239,68,68,0.15);font-size:28px;">🤖</div>
+        <div style="font-size:17px;font-weight:700;margin-bottom:8px;">Работает без вас</div>
+        <p style="font-size:14px;color:var(--muted);">Система сама генерирует темы, пишет, добавляет картинки и публикует — каждый день.</p>
+      </div>
+
+      <div class="card">
+        <div class="icon-badge" style="background:rgba(124,58,237,0.15);font-size:28px;">📍</div>
+        <div style="font-size:17px;font-weight:700;margin-bottom:8px;">Геолокальное SEO</div>
+        <p style="font-size:14px;color:var(--muted);">Статьи с привязкой к вашему городу — продвижение по локальным запросам.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+     СЛАЙД 6 — ТАРИФЫ
+     ════════════════════════════════════════════ -->
+<section class="slide" id="slide-6" style="padding-top:100px;padding-bottom:100px;">
+  <div class="glow glow-purple" style="width:600px;height:600px;top:50%;left:50%;transform:translate(-50%,-50%);"></div>
+
+  <div class="wrap">
+    <div class="slide-label">Тарифы</div>
+    <h2 class="heading-lg" style="text-align:center;">Выберите свой план</h2>
+    <p style="text-align:center;color:var(--muted);margin-bottom:56px;font-size:16px;">Подключение за 1 день. Первые статьи — уже завтра.</p>
+
+    <div class="grid-pricing">
+
+      <!-- СТАРТ -->
+      <div class="card" style="display:flex;flex-direction:column;">
+        <div style="font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);">Старт</div>
+        <div class="price">2 000 ₽</div>
+        <div class="price-period">в месяц</div>
+        <div class="divider" style="margin:24px 0 0;"></div>
+        <ul class="check-list" style="flex:1;">
+          <li>1 статья в день (30 в месяц)</li>
+          <li>Блог на вашем домене</li>
+          <li>Уникальные картинки к статьям</li>
+          <li>SEO-оптимизация автоматически</li>
+          <li class="dim">Личный кабинет клиента</li>
+          <li class="dim">Публикация через FTP на хостинг</li>
+          <li class="dim">SEO-отчёт ежемесячно</li>
+          <li class="dim">Личный менеджер</li>
+        </ul>
+        <a class="btn-primary" href="https://t.me/Besp1le" target="_blank" style="margin-top:28px;justify-content:center;background:rgba(124,58,237,0.2);box-shadow:none;border:1px solid rgba(124,58,237,0.4);">
+          Выбрать →
+        </a>
+      </div>
+
+      <!-- БИЗНЕС (popular) -->
+      <div class="card pricing-popular" style="display:flex;flex-direction:column;margin-top:8px;">
+        <div style="font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#A78BFA;">Бизнес</div>
+        <div class="price" style="-webkit-text-fill-color:initial;background:none;color:#A78BFA;">4 000 ₽</div>
+        <div class="price-period">в месяц</div>
+        <div class="divider" style="margin:24px 0 0;"></div>
+        <ul class="check-list" style="flex:1;">
+          <li>3 статьи в день (90 в месяц)</li>
+          <li>Блог на вашем домене</li>
+          <li>Уникальные картинки к статьям</li>
+          <li>SEO-оптимизация автоматически</li>
+          <li>Личный кабинет клиента</li>
+          <li>Публикация через FTP на хостинг</li>
+          <li class="dim">SEO-отчёт ежемесячно</li>
+          <li class="dim">Личный менеджер</li>
+        </ul>
+        <a class="btn-primary" href="https://t.me/Besp1le" target="_blank" style="margin-top:28px;justify-content:center;">
+          Выбрать →
+        </a>
+      </div>
+
+      <!-- ПРО -->
+      <div class="card" style="display:flex;flex-direction:column;">
+        <div style="font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);">Про</div>
+        <div class="price">8 000 ₽</div>
+        <div class="price-period">в месяц</div>
+        <div class="divider" style="margin:24px 0 0;"></div>
+        <ul class="check-list" style="flex:1;">
+          <li>5 статей в день (150 в месяц)</li>
+          <li>Блог на вашем домене</li>
+          <li>Уникальные картинки к статьям</li>
+          <li>SEO-оптимизация автоматически</li>
+          <li>Личный кабинет клиента</li>
+          <li>Публикация через FTP на хостинг</li>
+          <li>SEO-отчёт ежемесячно</li>
+          <li>Личный менеджер + поддержка</li>
+        </ul>
+        <a class="btn-primary" href="https://t.me/Besp1le" target="_blank" style="margin-top:28px;justify-content:center;background:linear-gradient(135deg,#06B6D4,#7C3AED);box-shadow:0 8px 32px rgba(6,182,212,0.25);">
+          Выбрать →
+        </a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+     СЛАЙД 7 — РЕЗУЛЬТАТЫ
+     ════════════════════════════════════════════ -->
+<section class="slide" id="slide-7" style="overflow:hidden;">
+  <div class="glow glow-cyan" style="width:500px;height:500px;top:-100px;right:-100px;"></div>
+
+  <div class="wrap">
+    <div class="slide-label">Результаты</div>
+    <h2 class="heading-lg">Цифры говорят<br><span class="grad-text">сами за себя</span></h2>
+
+    <div class="grid-2" style="margin-top:48px;gap:20px;">
+      <div class="card" style="text-align:center;padding:40px;">
+        <div class="stat-num">×3</div>
+        <div style="font-size:17px;font-weight:600;margin-top:12px;margin-bottom:6px;">Рост трафика</div>
+        <div style="font-size:14px;color:var(--muted);">за первые 3 месяца работы</div>
+      </div>
+
+      <div class="card" style="text-align:center;padding:40px;">
+        <div class="stat-num">90+</div>
+        <div style="font-size:17px;font-weight:600;margin-top:12px;margin-bottom:6px;">Статей в месяц</div>
+        <div style="font-size:14px;color:var(--muted);">на полном автопилоте</div>
+      </div>
+
+      <div class="card" style="text-align:center;padding:40px;">
+        <div class="stat-num">0</div>
+        <div style="font-size:17px;font-weight:600;margin-top:12px;margin-bottom:6px;">Минут вашего времени</div>
+        <div style="font-size:14px;color:var(--muted);">после настройки и запуска</div>
+      </div>
+
+      <div class="card" style="text-align:center;padding:40px;">
+        <div class="stat-num">TOP</div>
+        <div style="font-size:17px;font-weight:600;margin-top:12px;margin-bottom:6px;">Яндекс и Google</div>
+        <div style="font-size:14px;color:var(--muted);">по целевым запросам вашей ниши</div>
+      </div>
+    </div>
+
+    <img src="images/slide7.png" style="width:100%;max-height:100vh;object-fit:cover;object-position:center;border-radius:16px;margin-top:20px;" onerror="this.style.display='none'">
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+     СЛАЙД 8 — ПОЧЕМУ AUTOBLOG
+     ════════════════════════════════════════════ -->
+<section class="slide" id="slide-8" style="padding:48px 60px;overflow:hidden;">
+  <div class="glow glow-purple" style="width:400px;height:400px;bottom:-100px;left:50%;transform:translateX(-50%);"></div>
+
+  <div class="wrap" style="display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;">
+    <div>
+      <div class="slide-label">Почему AutoBlog</div>
+      <h2 class="heading-lg" style="font-size:clamp(26px,3vw,40px);margin-bottom:16px;">
+        Трафик растёт —<br><span class="grad-text">вы не делаете ничего</span>
+      </h2>
+      <p class="lead" style="font-size:14px;margin-bottom:24px;">
+        Пока конкуренты тратят бюджет на копирайтеров — ваш блог работает 24/7.
+      </p>
+
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div style="display:flex;align-items:center;gap:16px;padding:18px;background:var(--surface);border:1px solid var(--border);border-radius:14px;">
+          <span style="font-size:22px;width:36px;text-align:center;">📅</span>
+          <div>
+            <div style="font-weight:600;font-size:15px;">Контент каждый день</div>
+            <div style="font-size:13px;color:var(--muted);">Без перерывов, выходных и задержек</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:16px;padding:18px;background:var(--surface);border:1px solid var(--border);border-radius:14px;">
+          <span style="font-size:22px;width:36px;text-align:center;">🎯</span>
+          <div>
+            <div style="font-weight:600;font-size:15px;">SEO-оптимизация автоматически</div>
+            <div style="font-size:13px;color:var(--muted);">Статьи сразу готовы для ранжирования</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:16px;padding:18px;background:var(--surface);border:1px solid var(--border);border-radius:14px;">
+          <span style="font-size:22px;width:36px;text-align:center;">📈</span>
+          <div>
+            <div style="font-weight:600;font-size:15px;">Масштабируется с бизнесом</div>
+            <div style="font-size:13px;color:var(--muted);">Увеличивайте объём статей в один клик</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:16px;padding:18px;background:var(--surface);border:1px solid var(--border);border-radius:14px;">
+          <span style="font-size:22px;width:36px;text-align:center;">💰</span>
+          <div>
+            <div style="font-weight:600;font-size:15px;">Дешевле одного копирайтера</div>
+            <div style="font-size:13px;color:var(--muted);">150 статей в месяц за стоимость 2–3 текстов</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="border-radius:20px;overflow:hidden;height:calc(100vh - 200px);max-height:500px;">
+      <img src="images/slide8.png" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.style.background='rgba(255,255,255,0.04)'">
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+     СЛАЙД 9 — CTA
+     ════════════════════════════════════════════ -->
+<section class="slide" id="slide-9" style="overflow:hidden;text-align:center;justify-content:center;align-items:center;">
+  <div class="glow glow-purple" style="width:700px;height:700px;top:50%;left:50%;transform:translate(-50%,-50%);opacity:0.2;"></div>
+  <div class="glow glow-blue" style="width:500px;height:500px;top:50%;left:30%;transform:translate(-50%,-50%);opacity:0.1;"></div>
+
+  <div class="wrap" style="display:flex;flex-direction:column;align-items:center;">
+    <div class="tag" style="margin-bottom:28px;">⚡ Запуск за 1 день</div>
+
+    <h2 class="heading-xl" style="text-align:center;max-width:760px;">
+      Готовы запустить блог<br><span class="grad-text">на автопилоте?</span>
+    </h2>
+
+    <p class="lead" style="text-align:center;margin:24px auto 48px;max-width:500px;">
+      Подключаем за 1 день. Первые статьи — уже завтра. Трафик начнёт расти через 3 месяца.
+    </p>
+
+    <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;justify-content:center;">
+      <a class="btn-primary" href="https://t.me/Besp1le" target="_blank" style="font-size:18px;padding:18px 40px;">
+        Написать и подключиться →
+      </a>
+    </div>
+
+    <div style="display:flex;gap:48px;margin-top:64px;flex-wrap:wrap;justify-content:center;">
+      <div>
+        <div style="font-size:28px;font-weight:800;color:#A78BFA;">1 день</div>
+        <div style="font-size:13px;color:var(--muted);">до запуска</div>
+      </div>
+      <div>
+        <div style="font-size:28px;font-weight:800;color:#60A5FA;">30+ статей</div>
+        <div style="font-size:13px;color:var(--muted);">с первого месяца</div>
+      </div>
+      <div>
+        <div style="font-size:28px;font-weight:800;color:#34D399;">×3 трафик</div>
+        <div style="font-size:13px;color:var(--muted);">через 3 месяца</div>
+      </div>
+    </div>
+
+    <img src="images/slide9.png" style="width:100%;max-height:60vh;object-fit:cover;object-position:center;border-radius:16px;margin-top:24px;" onerror="this.style.display='none'">
+    </div>
+  </div>
+</section>
+
+
+
+<script>
+  const slides = document.querySelectorAll('section[id^="slide-"]');
+  const dotsContainer = document.getElementById('navDots');
+
+  slides.forEach((slide, i) => {
+    const dot = document.createElement('button');
+    dot.className = 'nav-dot';
+    dot.title = slide.id;
+    dot.onclick = () => slide.scrollIntoView({ behavior: 'smooth' });
+    dotsContainer.appendChild(dot);
+  });
+
+  const dots = dotsContainer.querySelectorAll('.nav-dot');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const idx = [...slides].indexOf(entry.target);
+        dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+      }
+    });
+  }, { threshold: 0.5 });
+
+  slides.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>
