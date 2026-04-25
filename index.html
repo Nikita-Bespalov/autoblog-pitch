@@ -299,6 +299,76 @@
     .nav-dots { display: none; }
     .slide { page-break-after: always; min-height: 100vh; }
   }
+
+  /* ══════════════════════════════
+     MOBILE
+  ══════════════════════════════ */
+  @media (max-width: 768px) {
+    .nav-dots { display: none; }
+
+    .slide {
+      padding: 56px 20px 48px !important;
+      min-height: auto !important;
+    }
+
+    /* Grids → single column */
+    .grid-3, .grid-2, .grid-pricing {
+      grid-template-columns: 1fr !important;
+    }
+
+    /* Two-column slide layouts */
+    #slide-1 .wrap > div[style*="grid-template-columns"],
+    #slide-3 .wrap > div[style*="grid-template-columns"] {
+      grid-template-columns: 1fr !important;
+      gap: 28px !important;
+    }
+    #slide-4 .wrap,
+    #slide-8 .wrap {
+      grid-template-columns: 1fr !important;
+      gap: 28px !important;
+    }
+
+    /* Column images → fixed height on mobile */
+    .col-img {
+      height: 240px !important;
+      max-height: 240px !important;
+    }
+
+    /* Slide 3: image was first (left col) — push it after text on mobile */
+    #slide-3 .col-img { order: 2; }
+    #slide-3 .col-text { order: 1; }
+
+    /* Headings */
+    .heading-xl { font-size: clamp(30px, 8vw, 44px) !important; }
+    .heading-lg { font-size: clamp(26px, 7vw, 36px) !important; }
+
+    /* Stats row slide 1 */
+    #slide-1 [style*="display:flex;gap:40px"] {
+      gap: 20px !important;
+      flex-wrap: wrap;
+    }
+
+    /* Pricing popular card margin */
+    .pricing-popular { margin-top: 20px !important; }
+
+    /* Strip images */
+    #slide-7 img, #slide-9 img {
+      max-height: 200px !important;
+    }
+
+    /* CTA button full width */
+    #slide-9 .btn-primary {
+      width: 100%;
+      justify-content: center;
+      font-size: 16px !important;
+      padding: 16px 24px !important;
+    }
+
+    /* Steps slide 4 */
+    #slide-4 [style*="position:absolute;left:18px"] {
+      display: none;
+    }
+  }
 </style>
 </head>
 <body>
@@ -340,7 +410,7 @@
         <a class="btn-primary" href="https://t.me/Besp1le" target="_blank">Подключить →</a>
       </div>
 
-      <div style="border-radius:20px;overflow:hidden;height:calc(100vh - 200px);max-height:520px;"><img src="images/slide1.png" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.style.background='rgba(255,255,255,0.04)'"></div>
+      <div class="col-img" style="border-radius:20px;overflow:hidden;height:calc(100vh - 200px);max-height:520px;"><img src="images/slide1.png" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.style.background='rgba(255,255,255,0.04)'"></div>
     </div>
   </div>
 </section>
@@ -395,9 +465,9 @@
 
   <div class="wrap">
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;">
-      <div style="border-radius:20px;overflow:hidden;height:calc(100vh - 200px);max-height:500px;"><img src="images/slide3.png" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.style.background='rgba(255,255,255,0.04)'"></div>
+      <div class="col-img" style="border-radius:20px;overflow:hidden;height:calc(100vh - 200px);max-height:500px;"><img src="images/slide3.png" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.style.background='rgba(255,255,255,0.04)'"></div>
 
-      <div>
+      <div class="col-text">
         <div class="slide-label">Решение</div>
         <h2 class="heading-lg">
           AutoBlog — ИИ работает<br><span class="grad-text">вместо копирайтера</span>
@@ -496,7 +566,7 @@
       </div>
     </div>
 
-    <div style="border-radius:20px;overflow:hidden;height:calc(100vh - 200px);max-height:500px;"><img src="images/slide4.png" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.style.background='rgba(255,255,255,0.04)'"></div>
+    <div class="col-img" style="border-radius:20px;overflow:hidden;height:calc(100vh - 200px);max-height:500px;"><img src="images/slide4.png" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.style.background='rgba(255,255,255,0.04)'"></div>
   </div>
 </section>
 
@@ -720,7 +790,7 @@
       </div>
     </div>
 
-    <div style="border-radius:20px;overflow:hidden;height:calc(100vh - 200px);max-height:500px;">
+    <div class="col-img" style="border-radius:20px;overflow:hidden;height:calc(100vh - 200px);max-height:500px;">
       <img src="images/slide8.png" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.style.background='rgba(255,255,255,0.04)'">
     </div>
   </div>
